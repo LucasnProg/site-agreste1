@@ -9,6 +9,9 @@ import ujadImg from '../assets/image/ujad.png';
 import ufadImg from '../assets/image/ufad.png';
 
 const Home = () => {
+
+    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
     useEffect(() => {
         const processEmbeds = () => {
             const globalWindow = window as any;
@@ -82,8 +85,29 @@ const Home = () => {
                     </div>
 
                     <div className="flex gap-4 items-center min-w-max lg:w-[320px] justify-end">
-                        <Menu size={24} className="lg:hidden text-blue-900 cursor-pointer" />
+                        <Menu size={24} className="lg:hidden text-blue-900 cursor-pointer" onClick={() => setIsMenuOpen(true)} />
                     </div>
+                    {isMenuOpen && (
+                        <div className="fixed inset-0 z-[100] lg:hidden">
+                            <div
+                                className="fixed inset-0 bg-black/50"
+                                onClick={() => setIsMenuOpen(false)}
+                            ></div>
+
+                            <div className="fixed right-0 top-0 h-full w-64 bg-white shadow-xl p-6 flex flex-col gap-6">
+                                <div className="flex justify-end">
+                                    <button onClick={() => setIsMenuOpen(false)} className="text-blue-900 font-bold text-2xl">✕</button>
+                                </div>
+
+                                <nav className="flex flex-col gap-6 font-semibold uppercase text-sm">
+                                    <a href="/" onClick={() => setIsMenuOpen(false)} className="hover:text-yellow-600">Início</a>
+                                    <a href="/em-breve" onClick={() => setIsMenuOpen(false)} className="hover:text-yellow-600">UJAD</a>
+                                    <a href="/em-breve" onClick={() => setIsMenuOpen(false)} className="hover:text-yellow-600">UFAD</a>
+                                    <a href="/em-breve" onClick={() => setIsMenuOpen(false)} className="hover:text-yellow-600">SEMAD</a>
+                                </nav>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </nav>
 

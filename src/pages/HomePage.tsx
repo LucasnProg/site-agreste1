@@ -2,6 +2,12 @@ import React, { useEffect } from 'react';
 import { Facebook, Instagram, Youtube, MapPin, Phone, Mail, Menu, Search, Calendar } from 'lucide-react';
 import Footer from '../components/Footer';
 import PostCard from '../components/PostCard';
+import logoImage from '../assets/image/logo.png';
+import bannerImg from '../assets/image/banner.jpg';
+import conferenciaImg from '../assets/image/conferencia.png';
+import ujadImg from '../assets/image/ujad.png';
+import ufadImg from '../assets/image/ufad.png';
+
 const Home = () => {
     useEffect(() => {
         const processEmbeds = () => {
@@ -56,7 +62,7 @@ const Home = () => {
 
                     <div className="flex items-center gap-2 min-w-max">
                         <img
-                            src={'src/assets/image/logo.png'}
+                            src={logoImage}
                             alt="Logo AD Agreste"
                             className="h-16 w-20 object-contain"
                         />
@@ -84,7 +90,7 @@ const Home = () => {
             {/* 3. HERO SECTION */}
             <section className="relative h-[500px] bg-blue-900 overflow-hidden">
                 <img
-                    src="src\assets\image\banner.jpg"
+                    src={bannerImg}
                     className="absolute inset-0 w-full h-full object-cover opacity-40"
                     alt="Igreja"
                 />
@@ -113,7 +119,7 @@ const Home = () => {
                         title="1º Conferencia Regional de Missões do Agreste 1"
                         date="29 de Novembro, 2025"
                         content="A Assembleia de Deus – Região Agreste 1 realizou, no dia 29 de novembro de 2025, a 1ª Conferência Regional de Missões, na AD Galante, em Galante-PB, com o tema “O avivamento realinha a missão da Igreja”. O evento foi marcado por momentos de renovação espiritual, capacitação e forte mobilização missionária, reunindo líderes e fiéis de todo o Agreste em um dia de despertamento e comunhão."
-                        imageUrl={"src/assets/image/conferencia.png"}
+                        imageUrl={conferenciaImg}
                     />
                     <PostCard
                         title=" Encontro da UFAD no Agreste 1"
@@ -125,7 +131,7 @@ A programação teve o tema: “A excelência de Maria no mundo de Marta” (Luc
 Foram centenas de mulheres que compõe os 13 municípios do agreste 1 que ofertaram sua adoração a Deus com um repertório de louvores especiais.
 
 O mover do Espírito Santo restaurou as servas de Deus e todos que estavam presentes sentiram esse agir."
-                        imageUrl={"src/assets/image/ufad.png"}
+                        imageUrl={ufadImg}
                     />
                     <PostCard
                         title="Pré-Encontro UJAD Agreste 1"
@@ -135,7 +141,7 @@ O mover do Espírito Santo restaurou as servas de Deus e todos que estavam prese
 E isso é só o começo do que o Senhor ainda vai realizar!
 
 Nos vemos novamente em 2026 "
-                        imageUrl={"src/assets/image/ujad.png"}
+                        imageUrl={ujadImg}
                     />
                 </div>
             </section>

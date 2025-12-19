@@ -1,110 +1,196 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Facebook, Instagram, Youtube, MapPin, Phone, Mail, Menu, Search, Calendar } from 'lucide-react';
-
+import Footer from '../components/Footer';
+import PostCard from '../components/PostCard';
 const Home = () => {
-  return (
-    <div className="min-h-screen bg-gray-50 font-sans text-slate-900">
-      
-      {/* 1. TOP BAR */}
-      <div className="bg-[#0f172a] text-white py-2 px-4 hidden md:block">
-        <div className="container mx-auto flex justify-between items-center text-xs">
-          <div className="flex gap-4">
-            <span className="flex items-center gap-1"><Phone size={14} className="text-yellow-500"/> (83) 3315-xxxx</span>
-            <span className="flex items-center gap-1"><Mail size={14} className="text-yellow-500"/> contato@adcampinagrande.com.br</span>
-          </div>
-          <div className="flex gap-3">
-            <Facebook size={16} className="hover:text-yellow-500 cursor-pointer transition" />
-            <Instagram size={16} className="hover:text-yellow-500 cursor-pointer transition" />
-            <Youtube size={16} className="hover:text-yellow-500 cursor-pointer transition" />
-          </div>
-        </div>
-      </div>
+    useEffect(() => {
+        const processEmbeds = () => {
+            const globalWindow = window as any;
+            if (globalWindow.instgrm && globalWindow.instgrm.Embeds) {
+                globalWindow.instgrm.Embeds.process();
+            }
+        };
 
-      {/* 2. NAVBAR */}
-      <nav className="bg-white shadow-md sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            {/* Placeholder para Logo */}
-            <div className="h-12 w-12 bg-blue-900 rounded-full flex items-center justify-center text-white font-bold text-xs italic">LOGO</div>
-            <div className="flex flex-col">
-              <span className="font-bold text-xl leading-tight text-blue-900">AD CAMPINA GRANDE</span>
-              <span className="text-[10px] tracking-widest uppercase text-gray-500">Assembleia de Deus</span>
-            </div>
-          </div>
-          
-          <div className="hidden lg:flex gap-8 font-semibold text-sm uppercase">
-            <a href="#" className="text-blue-900 hover:text-yellow-600">Início</a>
-            <a href="#" className="hover:text-yellow-600">A Igreja</a>
-            <a href="#" className="hover:text-yellow-600">Departamentos</a>
-            <a href="#" className="hover:text-yellow-600">Congregações</a>
-            <a href="#" className="hover:text-yellow-600">Eventos</a>
-            <a href="#" className="hover:text-yellow-600">Contribua</a>
-          </div>
+        const scriptId = 'instagram-embed-script';
+        let script = document.getElementById(scriptId) as HTMLScriptElement | null;
 
-          <div className="flex gap-4 items-center">
-            <Search size={20} className="text-gray-500 cursor-pointer" />
-            <Menu size={24} className="lg:hidden text-blue-900" />
-          </div>
-        </div>
-      </nav>
+        if (!script) {
+            script = document.createElement('script') as HTMLScriptElement;
+            script.id = scriptId;
+            script.src = "https://www.instagram.com/embed.js";
+            script.async = true;
+            script.onload = processEmbeds;
+            document.body.appendChild(script);
+        } else {
+            processEmbeds();
+        }
+    }, []);
 
-      {/* 3. HERO SECTION */}
-      <section className="relative h-[500px] bg-blue-900 overflow-hidden">
-        <img 
-          src="https://images.unsplash.com/photo-1438032005730-c779502df39b?auto=format&fit=crop&w=1600&q=80" 
-          className="absolute inset-0 w-full h-full object-cover opacity-40"
-          alt="Igreja"
-        />
-        <div className="relative container mx-auto h-full flex flex-col justify-center px-4 text-white">
-          <span className="bg-yellow-600 w-fit px-4 py-1 rounded-full text-sm font-bold mb-4">DESTAQUE</span>
-          <h1 className="text-4xl md:text-6xl font-bold max-w-2xl leading-tight">
-            Culto de Doutrina e Ensino da Palavra
-          </h1>
-          <p className="mt-4 text-lg text-gray-200">Todas as terças-feiras às 19h no Templo Central.</p>
-          <button className="mt-8 bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-3 rounded-md font-bold transition w-fit uppercase">
-            Ver Programação
-          </button>
-        </div>
-      </section>
+    return (
+        <div className="min-h-screen bg-gray-50 font-sans text-slate-900">
 
-      {/* 4. NOTÍCIAS (Grid) */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="flex justify-between items-end mb-10">
-          <div>
-            <h2 className="text-3xl font-bold text-blue-900">Últimas Notícias</h2>
-            <div className="h-1 w-20 bg-yellow-500 mt-2"></div>
-          </div>
-          <button className="text-blue-900 font-bold border-b-2 border-blue-900 hover:text-yellow-600 hover:border-yellow-600 transition">Ver tudo</button>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {[1, 2, 3].map((item) => (
-            <div key={item} className="bg-white rounded-xl shadow-lg overflow-hidden group">
-              <div className="h-52 bg-gray-200 relative overflow-hidden">
-                <img 
-                  src={`https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&w=600&q=80`} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex items-center gap-2 text-gray-500 text-xs mb-3">
-                  <Calendar size={14} /> 12 de Outubro, 2024
+            {/* 1. TOP BAR */}
+            <div className="bg-[#0f172a] text-white py-2 px-4 hidden md:block">
+                <div className="container mx-auto flex justify-between items-center text-xs">
+                    <div className="flex gap-4">
+                        {/*<span className="flex items-center gap-1"><Phone size={14} className="text-yellow-500"/> (83) 3315-xxxx</span>*/}
+                        <a
+                            href="mailto:agresteparaibano1@gmail.com"
+                            className="flex items-center gap-1 hover:text-yellow-500 transition"
+                        >
+                            <Mail size={14} className="text-yellow-500" />
+                            agresteparaibano1@gmail.com
+                        </a>
+                    </div>
+                    <div className="flex gap-3">
+                        <a href='https://www.facebook.com/ADCampinaGrande/' target='_blank' rel='noopener noreferrer'><Facebook size={20} className="hover:text-yellow-500 cursor-pointer transition" /></a>
+                        <a href='https://www.instagram.com/adagreste1/' target='_blank' rel='noopener noreferrer'><Instagram size={20} className="hover:text-yellow-500 cursor-pointer transition" /></a>
+                        <a href='https://www.youtube.com/@ADCampinaGrandeOficial' target='_blank' rel='noopener noreferrer'><Youtube size={20} className="hover:text-yellow-500 cursor-pointer transition" /></a>
+                    </div>
                 </div>
-                <h3 className="text-xl font-bold text-blue-900 mb-3 group-hover:text-yellow-600 transition">
-                  Grande Congresso de Jovens acontece neste final de semana
-                </h3>
-                <p className="text-gray-600 text-sm line-clamp-3">
-                  A AD Campina Grande convida todos para o evento que reunirá caravanas de todo o estado para momentos de louvor e adoração...
-                </p>
-                <button className="mt-4 text-sm font-bold text-blue-900 uppercase tracking-wider">Leia mais +</button>
-              </div>
             </div>
-          ))}
-        </div>
-      </section>
 
-    </div>
-  );
+            {/* 2. NAVBAR */}
+            <nav className="bg-white shadow-md sticky top-0 z-50">
+                <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+
+                    <div className="flex items-center gap-2 min-w-max">
+                        <img
+                            src={'src/assets/image/logo.png'}
+                            alt="Logo AD Agreste"
+                            className="h-16 w-20 object-contain"
+                        />
+                        <div className="flex flex-col">
+                            <span className="font-bold text-xl leading-tight text-blue-900">AD AGRESTE I</span>
+                            <span className="text-[10px] tracking-widest uppercase text-gray-500">
+                                Assembleia de Deus na Região do Agreste 1
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="hidden lg:flex flex-grow justify-center gap-10 font-semibold text-sm uppercase">
+                        <a href="/" className="text-blue-900 hover:text-yellow-600 border-b-2 border-transparent hover:border-yellow-600 transition-all">Início</a>
+                        <a href="/em-breve" className="hover:text-yellow-600 border-b-2 border-transparent hover:border-yellow-600 transition-all">UJAD</a>
+                        <a href="/em-breve" className="hover:text-yellow-600 border-b-2 border-transparent hover:border-yellow-600 transition-all">UFAD</a>
+                        <a href="/em-breve" className="hover:text-yellow-600 border-b-2 border-transparent hover:border-yellow-600 transition-all">SEMAD</a>
+                    </div>
+
+                    <div className="flex gap-4 items-center min-w-max lg:w-[320px] justify-end">
+                        <Menu size={24} className="lg:hidden text-blue-900 cursor-pointer" />
+                    </div>
+                </div>
+            </nav>
+
+            {/* 3. HERO SECTION */}
+            <section className="relative h-[500px] bg-blue-900 overflow-hidden">
+                <img
+                    src="src\assets\image\banner.jpg"
+                    className="absolute inset-0 w-full h-full object-cover opacity-40"
+                    alt="Igreja"
+                />
+                <div className="relative container mx-auto h-full flex flex-col justify-center px-4 text-white">
+                    <h1 className="text-4xl md:text-6xl font-bold max-w-2xl leading-tight">
+
+                    </h1>
+                    <p className="mt-4 text-lg text-gray-200"></p>
+
+                </div>
+            </section>
+
+            {/* 4. NOTÍCIAS (Grid) */}
+            <section className="container mx-auto px-4 py-16">
+                <div className="flex justify-between items-end mb-10">
+                    <div>
+                        <h2 className="text-3xl font-bold text-blue-900">Eventos</h2>
+                        <div className="h-1 w-20 bg-yellow-500 mt-2"></div>
+                    </div>
+                    {<button className="text-blue-900 font-bold border-b-2 border-blue-900 hover:text-yellow-600 hover:border-yellow-600 transition">
+                        <a href='https://www.instagram.com/adagreste1/' target='_blank'>Ver tudo</a></button>}
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-8">
+                    <PostCard
+                        title="1º Conferencia Regional de Missões do Agreste 1"
+                        date="29 de Novembro, 2025"
+                        content="A Assembleia de Deus – Região Agreste 1 realizou, no dia 29 de novembro de 2025, a 1ª Conferência Regional de Missões, na AD Galante, em Galante-PB, com o tema “O avivamento realinha a missão da Igreja”. O evento foi marcado por momentos de renovação espiritual, capacitação e forte mobilização missionária, reunindo líderes e fiéis de todo o Agreste em um dia de despertamento e comunhão."
+                        imageUrl={"src/assets/image/conferencia.png"}
+                    />
+                    <PostCard
+                        title=" Encontro da UFAD no Agreste 1"
+                        date="28 de Setembro, 2025"
+                        content="O Encontro da UFAD no Agreste 1, aconteceu durante a tarde e a noite do sábado (27) no Ginásio José Tito Filho Travessa, em Riachão do Bacamarte.
+
+A programação teve o tema: “A excelência de Maria no mundo de Marta” (Lucas 10:42) e contou com a presença de convidados como a Supervisora Geral da UFAD Missionária Vânia Costa, além da cantora Ruthe Dayanne e as pregadoras Sadja Rolim e Etânia Simões.
+
+Foram centenas de mulheres que compõe os 13 municípios do agreste 1 que ofertaram sua adoração a Deus com um repertório de louvores especiais.
+
+O mover do Espírito Santo restaurou as servas de Deus e todos que estavam presentes sentiram esse agir."
+                        imageUrl={"src/assets/image/ufad.png"}
+                    />
+                    <PostCard
+                        title="Pré-Encontro UJAD Agreste 1"
+                        date="23 de Outubro, 2025"
+                        content="A presença de Deus foi real, poderosa e transformadora. Corações foram tocados, vidas renovadas e o fogo do Espírito reacendido!
+
+E isso é só o começo do que o Senhor ainda vai realizar!
+
+Nos vemos novamente em 2026 "
+                        imageUrl={"src/assets/image/ujad.png"}
+                    />
+                </div>
+            </section>
+            <section className="container mx-auto px-4 py-16">
+                {/* Cabeçalho Centralizado */}
+                <div className="flex flex-col items-center mb-12">
+                    <h2 className="text-3xl font-bold text-blue-900 text-center">Mídias Sociais</h2>
+                    <div className="h-1 w-20 bg-yellow-500 mt-2"></div>
+                </div>
+
+                {/* Grid de Carrosséis */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {/* Carrossel 1 */}
+                    <div className="p-4 flex justify-center">
+                        {/* Aqui você insere o código de Embed do Instagram */}
+                        <blockquote
+                            className="instagram-media"
+                            data-instgrm-permalink="https://www.instagram.com/p/DRsIoW4Ee07/"
+                            data-instgrm-version="14"
+                        ></blockquote>
+                    </div>
+
+                    {/* Carrossel 2 */}
+                    <div className="p-4 flex justify-center">
+                        <blockquote
+                            className="instagram-media"
+                            data-instgrm-permalink="https://www.instagram.com/p/DRsJkukkQ6U/"
+                            data-instgrm-version="14"
+                        ></blockquote>
+                    </div>
+
+                    {/* Carrossel 3 */}
+                    <div className="p-4 flex justify-center">
+                        <blockquote
+                            className="instagram-media"
+                            data-instgrm-permalink="https://www.instagram.com/p/DRucUBLkVTY/"
+                            data-instgrm-version="14"
+                        ></blockquote>
+                    </div>
+
+                    {/* Carrossel 3 */}
+                    <div className="p-4 flex justify-center">
+                        <blockquote
+                            className="instagram-media"
+                            data-instgrm-permalink="https://www.instagram.com/p/DPPflQ8DxjB/"
+                            data-instgrm-version="14"
+                        ></blockquote>
+                    </div>
+
+                </div>
+            </section>
+            <Footer />
+        </div>
+
+    );
 };
 
 export default Home;

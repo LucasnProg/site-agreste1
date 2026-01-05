@@ -2,11 +2,57 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, User, MapPin, Phone, Mail, Shirt, CheckCircle } from 'lucide-react';
 import Footer from '../components/Footer';
+import { initMercadoPago } from '@mercadopago/sdk-react';
+import { useEffect } from 'react';
+
+initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY);
 
 const InscricaoUJAD = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [pixData, setPixData] = useState<{ qr_code: string, qr_code_url: string } | null>(null);
+    const [isRedirecting, setIsRedirecting] = useState(false);
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+
+        if (status === 'success') {
+            handleFinalizeRegistration();
+        }
+    }, []);
+
+    const handleFinalizeRegistration = async () => {
+        await fetch(import.meta.env.VITE_GOOGLE_SHEETS_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify({ ...formData, status: 'PAGO' })
+        });
+        alert("Inscrição finalizada com Sucesso!");
+        navigate('/');
+    };
+
+    const handleProceedToPayment = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsRedirecting(true);
+
+        try {
+            const response = await fetch('/.netlify/functions/create-preference', {
+                method: 'POST',
+                body: JSON.stringify(formData)
+            });
+            const preference = await response.json();
+
+            // Salva os dados temporariamente para persistir após o redirecionamento
+            localStorage.setItem('ujad_registration_data', JSON.stringify(formData));
+
+            // Redireciona o usuário para o Checkout Pro do Mercado Pago
+            window.location.href = preference.init_point;
+        } catch (error) {
+            alert("Erro ao iniciar pagamento. Tente novamente.");
+            setIsRedirecting(false);
+        }
+    };
 
     const localidadesAgreste1 = [
         "AD Chã dos Marinhos", "AD Chã dos Pereiras", "AD Fagundes", "AD Galante",
@@ -224,6 +270,7 @@ const InscricaoUJAD = () => {
                     {/* Botão de Submissão */}
                     <button
                         type="submit"
+                        onClick={handleProceedToPayment}
                         disabled={!formData.confirmado}
                         className={`w-full mt-8 font-bold py-4 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg uppercase tracking-widest text-sm
                         ${formData.confirmado
@@ -231,8 +278,9 @@ const InscricaoUJAD = () => {
                                 : 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
                             }`}
                     >
-                        <Send size={18} /> Prosseguir com a Inscrição
+                        <Send size={18} /> {isRedirecting ? "Redirecionando..." : "Prosseguir com a Inscrição"}
                     </button>
+
                 </form>
             </main>
 

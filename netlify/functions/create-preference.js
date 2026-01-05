@@ -2,7 +2,7 @@ const { MercadoPagoConfig, Preference } = require('mercadopago');
 
 exports.handler = async (event) => {
 
-    const baseUrl = 'https://adagreste1.netlify.app/';
+    const baseUrl = 'https://adagreste1.netlify.app';
     const client = new MercadoPagoConfig({
         accessToken: process.env.MP_ACCESS_TOKEN
     });

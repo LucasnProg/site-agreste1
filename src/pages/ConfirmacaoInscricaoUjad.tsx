@@ -63,7 +63,7 @@ const ConfirmacaoInscricaoUjad = () => {
                             <h2 className="text-3xl font-bold text-adBlue">Sucesso!</h2>
                             <p className="text-gray-600 italic">Sua inscrição foi confirmada. Você será redirecionado em instantes.</p>
                             <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                                <p className="text-xs text-adBlue font-bold">Planilha atualizada com sucesso.</p>
+                                <p className="text-xs text-adBlue font-bold">Pagamento realizado com sucesso.</p>
                             </div>
                         </div>
                     )}

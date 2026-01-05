@@ -1,10 +1,10 @@
 const { MercadoPagoConfig, Preference } = require('mercadopago');
 
-const baseUrl = process.env.URL || "http://localhost:8888";
-
 exports.handler = async (event) => {
+
+    const baseUrl = 'https://adagreste1.netlify.app/';
     const client = new MercadoPagoConfig({
-        accessToken: process.env.MP_ACCESS_TOKEN // Defina isso no painel do Netlify
+        accessToken: process.env.MP_ACCESS_TOKEN
     });
     const preference = new Preference(client);
     const data = JSON.parse(event.body);
@@ -16,7 +16,7 @@ exports.handler = async (event) => {
                     id: 'inscricao-ujad-2025',
                     title: `Inscrição UJAD - Camisa ${data.tamanhoCamisa}`,
                     quantity: 1,
-                    unit_price: 150.00, // Valor da inscrição
+                    unit_price: 150.00,
                     currency_id: 'BRL'
                 }
             ],
@@ -24,9 +24,15 @@ exports.handler = async (event) => {
                 name: data.nome,
                 email: data.email,
             },
+            payment_methods: {
+                installments: 3,
+                excluded_payment_types: [
+                    { id: "ticket" } // Isso remove apenas Boleto/Lotérica
+                ],
+            },
             back_urls: {
-                // Certifique-se de que o caminho /ujad-inscricao está correto no seu App.jsx
-                success: `${baseUrl}/ujad?status=success`,
+                // Ajustado para garantir que a URL nunca seja 'undefined'
+                success: `${baseUrl}/ujad-success`,
                 failure: `${baseUrl}/ujad?status=failure`,
                 pending: `${baseUrl}/ujad?status=pending`
             },
@@ -43,6 +49,11 @@ exports.handler = async (event) => {
             })
         };
     } catch (error) {
-        return { statusCode: 500, body: JSON.stringify(error) };
+        // Log detalhado no terminal para você ver exatamente o que o MP diz
+        console.error("ERRO DETALHADO DO MERCADO PAGO:", error.message);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message })
+        };
     }
 };

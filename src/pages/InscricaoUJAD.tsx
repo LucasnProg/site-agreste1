@@ -18,19 +18,8 @@ const InscricaoUJAD = () => {
         const status = urlParams.get('status');
 
         if (status === 'success') {
-            handleFinalizeRegistration();
         }
     }, []);
-
-    const handleFinalizeRegistration = async () => {
-        await fetch(import.meta.env.VITE_GOOGLE_SHEETS_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify({ ...formData, status: 'PAGO' })
-        });
-        alert("Inscrição finalizada com Sucesso!");
-        navigate('/');
-    };
 
     const handleProceedToPayment = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -108,16 +97,16 @@ const InscricaoUJAD = () => {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(`Erro na Function: ${errorText}`);
+                throw new Error(`Erro no servidor: ${errorText}`);
             }
 
-            const preference = await response.json();
+            const data = await response.json();
 
-            if (preference && preference.init_point) {
+            if (data && data.init_point) {
                 localStorage.setItem('ujad_registration_data', JSON.stringify(formData));
-                window.location.href = preference.init_point;
+                window.location.href = data.init_point;
             } else {
-                throw new Error("Link de pagamento (init_point) não recebido do servidor.");
+                throw new Error("init_point não encontrado na resposta.");
             }
         } catch (error) {
             console.error("Erro detalhado:", error);

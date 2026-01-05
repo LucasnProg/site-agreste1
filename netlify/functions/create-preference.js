@@ -13,8 +13,8 @@ exports.handler = async (event) => {
         const body = {
             items: [
                 {
-                    id: 'inscricao-ujad-2025',
-                    title: `Inscrição UJAD - Camisa ${data.tamanhoCamisa}`,
+                    id: 'inscricao-ujad-2026',
+                    title: `Inscrição UJAD + Camisa ${data.tamanhoCamisa}`,
                     quantity: 1,
                     unit_price: 150.00,
                     currency_id: 'BRL'

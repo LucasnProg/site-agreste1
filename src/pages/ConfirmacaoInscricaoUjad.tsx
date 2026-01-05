@@ -5,44 +5,51 @@ import Footer from '../components/Footer';
 
 const ConfirmacaoInscricaoUjad = () => {
     const navigate = useNavigate();
-    const [statusEnvio, setStatusEnvio] = useState('processando'); // processando, sucesso, erro
+    const [statusEnvio, setStatusEnvio] = useState('processando');
 
     useEffect(() => {
         const enviarDadosEAgendarRedirecionamento = async () => {
             const dadosSalvos = localStorage.getItem('ujad_registration_data');
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const mpStatus = urlParams.get('status'); 
+            const mpPaymentType = urlParams.get('payment_type');
+
             if (dadosSalvos) {
                 try {
                     const formData = JSON.parse(dadosSalvos);
 
-                    // Envia para o Google Sheets
+                    const statusTraduzido =
+                        mpStatus === 'approved' ? 'APROVADO' :
+                            (mpStatus === 'pending' || mpStatus === 'in_process') ? 'PENDENTE/ANÁLISE' : 'REJEITADO';
+
+                    const formaTraduzida =
+                        mpPaymentType === 'credit_card' ? 'Cartão de Crédito' :
+                            mpPaymentType === 'account_money' ? 'Pix/Saldo MP' :
+                                mpPaymentType === 'bank_transfer' ? 'Pix' :
+                                    mpPaymentType === 'ticket' ? 'Boleto' : mpPaymentType;
+
                     await fetch(import.meta.env.VITE_GOOGLE_SHEETS_URL, {
                         method: 'POST',
                         mode: 'no-cors',
                         body: JSON.stringify({
                             ...formData,
-                            status: 'PAGO',
+                            formaPagamento: formaTraduzida, 
+                            statusPagamento: statusTraduzido, 
                             data_pagamento: new Date().toLocaleString('pt-BR')
                         })
                     });
 
-                    // Limpa para evitar duplicidade
                     localStorage.removeItem('ujad_registration_data');
                     setStatusEnvio('sucesso');
                 } catch (error) {
-                    console.error("Erro ao enviar para planilha:", error);
+                    console.error("Erro ao processar retorno:", error);
                     setStatusEnvio('erro');
                 }
-            } else {
-                setStatusEnvio('sucesso'); // Já processado ou sem dados
             }
 
-            // Redireciona após 5 segundos independente do resultado do Sheets
-            const timer = setTimeout(() => {
-                navigate('/');
-            }, 5000);
-
-            return () => clearTimeout(timer);
+            // Redireciona após 5 segundos
+            setTimeout(() => navigate('/'), 5000);
         };
 
         enviarDadosEAgendarRedirecionamento();

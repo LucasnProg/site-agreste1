@@ -32,7 +32,6 @@ const InscricaoUJAD = () => {
             });
             const preference = await response.json();
 
-            // Salva os dados temporariamente para persistir após o redirecionamento
             localStorage.setItem('ujad_registration_data', JSON.stringify(formData));
 
             // Redireciona o usuário para o Checkout Pro do Mercado Pago
@@ -59,7 +58,6 @@ const InscricaoUJAD = () => {
         telefone: '',
         localidade: '',
         tamanhoCamisa: '',
-        metodoPagamento: 'pix',
         confirmado: false
     });
 

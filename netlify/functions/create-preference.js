@@ -32,7 +32,7 @@ exports.handler = async (event) => {
             },
             back_urls: {
                 // Ajustado para garantir que a URL nunca seja 'undefined'
-                success: `${baseUrl}/ujad-success`,
+                success: `${baseUrl}/ujad-successo`,
                 failure: `${baseUrl}/ujad?status=failure`,
                 pending: `${baseUrl}/ujad?status=pending`
             },

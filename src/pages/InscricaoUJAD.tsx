@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, User, MapPin, Phone, Mail, Shirt } from 'lucide-react';
+import { ArrowLeft, Send, User, MapPin, Phone, Mail, Shirt, CheckCircle } from 'lucide-react';
 import Footer from '../components/Footer';
 
 const InscricaoUJAD = () => {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [pixData, setPixData] = useState<{ qr_code: string, qr_code_url: string } | null>(null);
+
     const localidadesAgreste1 = [
         "AD Chã dos Marinhos", "AD Chã dos Pereiras", "AD Fagundes", "AD Galante",
         "AD Independência", "AD Ingá", "AD Itatuba", "AD Juarez Távora", "AD Jurema",
@@ -21,6 +24,7 @@ const InscricaoUJAD = () => {
         telefone: '',
         localidade: '',
         tamanhoDaCamisa: '',
+        metodoPagamento: 'pix',
         confirmado: false
     });
 
@@ -45,16 +49,51 @@ const InscricaoUJAD = () => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
 
-        if (!formData.localidade) {
-            alert("Por favor, selecione uma localidade.");
-            return;
+        try {
+            // 1. Chamar Backend para Pagamento
+            const payReq = await fetch('/.netlify/functions/process-payment', {
+                method: 'POST',
+                body: JSON.stringify(formData)
+            });
+            const order = await payReq.json();
+
+            if (formData.metodoPagamento === 'pix') {
+                const qrCode = order.checkouts?.[0]?.pix_expiration_date || order.charges[0].last_transaction;
+                setPixData({ qr_code: qrCode.qr_code, qr_code_url: qrCode.qr_code_url });
+
+                // 2. Enviar para Google Sheets (Simultâneo ou após confirmação via Webhook)
+                await fetch(import.meta.env.VITE_GOOGLE_SHEETS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ ...formData, status: 'Aguardando Pagamento' })
+                });
+            }
+
+            setLoading(false);
+        } catch (error) {
+            alert("Erro no processo. Tente novamente.");
+            setLoading(false);
         }
-        alert('Inscrição enviada com sucesso! Em breve entraremos em contato.');
-        console.log('Dados da Inscrição:', formData);
     };
+
+    if (pixData) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+                <div className="bg-white p-8 rounded-xl shadow-xl max-w-md text-center border-t-4 border-adGold">
+                    <CheckCircle className="mx-auto text-green-500 mb-4" size={48} />
+                    <h2 className="text-2xl font-bold text-adBlue mb-2">Pedido Gerado!</h2>
+                    <p className="text-gray-600 mb-6">Escaneie o QR Code abaixo para pagar via PIX e confirmar sua inscrição.</p>
+                    <img src={pixData.qr_code_url} alt="QR Code Pix" className="mx-auto mb-4 w-48 h-48" />
+                    <div className="bg-gray-100 p-3 rounded text-xs break-all mb-4 font-mono">{pixData.qr_code}</div>
+                    <button onClick={() => navigate('/')} className="bg-adBlue text-white px-6 py-2 rounded-lg font-bold">Voltar ao Início</button>
+                </div>
+            </div>
+        );
+    }
 
 
     return (
@@ -185,9 +224,9 @@ const InscricaoUJAD = () => {
                     {/* Botão de Submissão */}
                     <button
                         type="submit"
-                        disabled={!formData.confirmado} 
+                        disabled={!formData.confirmado}
                         className={`w-full mt-8 font-bold py-4 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg uppercase tracking-widest text-sm
-    ${formData.confirmado
+                        ${formData.confirmado
                                 ? 'bg-adBlue hover:bg-slate-800 text-white cursor-pointer'
                                 : 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
                             }`}

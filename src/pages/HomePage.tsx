@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Facebook, Instagram, Youtube, MapPin, Phone, Mail, Menu, Search, Calendar } from 'lucide-react';
+import { Facebook, Instagram, Youtube, Mail, Menu} from 'lucide-react';
 import Footer from '../components/Footer';
 import PostCard from '../components/PostCard';
 import logoImage from '../assets/image/logo.png';
@@ -79,7 +79,7 @@ const Home = () => {
 
                     <div className="hidden lg:flex flex-grow justify-center gap-10 font-semibold text-sm uppercase">
                         <a href="/" className="text-blue-900 hover:text-yellow-600 border-b-2 border-transparent hover:border-yellow-600 transition-all">Início</a>
-                        <a href="/UJAD" className="hover:text-yellow-600 border-b-2 border-transparent hover:border-yellow-600 transition-all">UJAD</a>
+                        <a href="/em-breve" className="hover:text-yellow-600 border-b-2 border-transparent hover:border-yellow-600 transition-all">UJAD</a>
                         <a href="/em-breve" className="hover:text-yellow-600 border-b-2 border-transparent hover:border-yellow-600 transition-all">UFAD</a>
                         <a href="/em-breve" className="hover:text-yellow-600 border-b-2 border-transparent hover:border-yellow-600 transition-all">SEMAD</a>
                     </div>
@@ -101,7 +101,7 @@ const Home = () => {
 
                                 <nav className="flex flex-col gap-6 font-semibold uppercase text-sm">
                                     <a href="/" onClick={() => setIsMenuOpen(false)} className="hover:text-yellow-600">Início</a>
-                                    <a href="/UJAD" onClick={() => setIsMenuOpen(false)} className="hover:text-yellow-600">UJAD</a>
+                                    <a href="/em-breve" onClick={() => setIsMenuOpen(false)} className="hover:text-yellow-600">UJAD</a>
                                     <a href="/em-breve" onClick={() => setIsMenuOpen(false)} className="hover:text-yellow-600">UFAD</a>
                                     <a href="/em-breve" onClick={() => setIsMenuOpen(false)} className="hover:text-yellow-600">SEMAD</a>
                                 </nav>

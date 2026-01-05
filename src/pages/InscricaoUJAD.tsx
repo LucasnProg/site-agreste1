@@ -47,7 +47,7 @@ const InscricaoUJAD = () => {
             localStorage.setItem('ujad_registration_data', JSON.stringify(formData));
 
             // Redireciona o usuário para o Checkout Pro do Mercado Pago
-            window.location.href = preference.init_point;
+            //window.location.href = preference.init_point;
         } catch (error) {
             alert("Erro ao iniciar pagamento. Tente novamente.");
             setIsRedirecting(false);
@@ -69,7 +69,7 @@ const InscricaoUJAD = () => {
         email: '',
         telefone: '',
         localidade: '',
-        tamanhoDaCamisa: '',
+        tamanhoCamisa: '',
         metodoPagamento: 'pix',
         confirmado: false
     });
@@ -97,32 +97,32 @@ const InscricaoUJAD = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
+        setIsRedirecting(true);
 
         try {
-            // 1. Chamar Backend para Pagamento
-            const payReq = await fetch('/.netlify/functions/process-payment', {
+            const response = await fetch('/.netlify/functions/create-preference', {
                 method: 'POST',
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
             });
-            const order = await payReq.json();
 
-            if (formData.metodoPagamento === 'pix') {
-                const qrCode = order.checkouts?.[0]?.pix_expiration_date || order.charges[0].last_transaction;
-                setPixData({ qr_code: qrCode.qr_code, qr_code_url: qrCode.qr_code_url });
-
-                // 2. Enviar para Google Sheets (Simultâneo ou após confirmação via Webhook)
-                await fetch(import.meta.env.VITE_GOOGLE_SHEETS_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({ ...formData, status: 'Aguardando Pagamento' })
-                });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Erro na Function: ${errorText}`);
             }
 
-            setLoading(false);
+            const preference = await response.json();
+
+            if (preference && preference.init_point) {
+                localStorage.setItem('ujad_registration_data', JSON.stringify(formData));
+                window.location.href = preference.init_point;
+            } else {
+                throw new Error("Link de pagamento (init_point) não recebido do servidor.");
+            }
         } catch (error) {
-            alert("Erro no processo. Tente novamente.");
-            setLoading(false);
+            console.error("Erro detalhado:", error);
+            alert("Falha ao gerar pagamento. Verifique o terminal do ntl dev.");
+            setIsRedirecting(false);
         }
     };
 
@@ -270,7 +270,6 @@ const InscricaoUJAD = () => {
                     {/* Botão de Submissão */}
                     <button
                         type="submit"
-                        onClick={handleProceedToPayment}
                         disabled={!formData.confirmado}
                         className={`w-full mt-8 font-bold py-4 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg uppercase tracking-widest text-sm
                         ${formData.confirmado

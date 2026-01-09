@@ -21,27 +21,6 @@ const InscricaoUJAD = () => {
         }
     }, []);
 
-    const handleProceedToPayment = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsRedirecting(true);
-
-        try {
-            const response = await fetch('/.netlify/functions/create-preference', {
-                method: 'POST',
-                body: JSON.stringify(formData)
-            });
-            const preference = await response.json();
-
-            localStorage.setItem('ujad_registration_data', JSON.stringify(formData));
-
-            // Redireciona o usuário para o Checkout Pro do Mercado Pago
-            //window.location.href = preference.init_point;
-        } catch (error) {
-            alert("Erro ao iniciar pagamento. Tente novamente.");
-            setIsRedirecting(false);
-        }
-    };
-
     const localidadesAgreste1 = [
         "AD Chã dos Marinhos", "AD Chã dos Pereiras", "AD Fagundes", "AD Galante",
         "AD Independência", "AD Ingá", "AD Itatuba", "AD Juarez Távora", "AD Jurema",

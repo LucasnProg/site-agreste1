@@ -1,3 +1,4 @@
+const { Phone } = require('lucide-react');
 const { MercadoPagoConfig, Preference } = require('mercadopago');
 
 exports.handler = async (event) => {
@@ -8,7 +9,6 @@ exports.handler = async (event) => {
     });
     const preference = new Preference(client);
     const data = JSON.parse(event.body);
-
     try {
         const body = {
             items: [
@@ -23,15 +23,19 @@ exports.handler = async (event) => {
             payer: {
                 name: data.nome,
                 email: data.email,
+                Phone: {
+                    area_code: data.telefone.substring(0, 2),
+                    number: data.telefone.substring(2)
+                }
             },
+            binary_mode: true,
             payment_methods: {
                 installments: 3,
                 excluded_payment_types: [
-                    { id: "ticket" } // Isso remove apenas Boleto/Lotérica
+                    { id: "ticket" }
                 ],
             },
             back_urls: {
-                // Ajustado para garantir que a URL nunca seja 'undefined'
                 success: `${baseUrl}/ujad-successo`,
                 failure: `${baseUrl}/ujad?status=failure`,
                 pending: `${baseUrl}/ujad?status=pending`

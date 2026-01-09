@@ -35,10 +35,17 @@ exports.handler = async (event) => {
                     { id: "ticket" }
                 ],
             },
+            metadata: {
+                nome: data.nome,
+                email: data.email,
+                telefone: data.telefone,
+                localidade: data.localidade
+            },
+            notification_url: `${baseUrl}/.netlify/functions/payment-notification`,
             back_urls: {
                 success: `${baseUrl}/ujad-sucesso`,
                 failure: `${baseUrl}/ujad?status=failure`,
-                pending: `${baseUrl}/ujad?status=pending`
+                pending: `${baseUrl}/ujad?status=failure`
             },
             auto_return: "approved",
         };

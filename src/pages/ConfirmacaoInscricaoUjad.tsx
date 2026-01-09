@@ -1,79 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, Loader2 } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import Footer from '../components/Footer';
 
 const ConfirmacaoInscricaoUjad = () => {
     const navigate = useNavigate();
-    const [statusEnvio, setStatusEnvio] = useState('processando');
 
     useEffect(() => {
-        const enviarDadosEAgendarRedirecionamento = async () => {
-            const dadosSalvos = localStorage.getItem('ujad_registration_data');
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const mpStatus = urlParams.get('status'); 
-            const mpPaymentType = urlParams.get('payment_type');
-
-            if (dadosSalvos) {
-                try {
-                    const formData = JSON.parse(dadosSalvos);
-
-                    const statusTraduzido =
-                        mpStatus === 'approved' ? 'APROVADO' :
-                            (mpStatus === 'pending' || mpStatus === 'in_process') ? 'PENDENTE/ANÁLISE' : 'REJEITADO';
-
-                    const formaTraduzida =
-                        mpPaymentType === 'credit_card' ? 'Cartão de Crédito' :
-                            mpPaymentType === 'account_money' ? 'Pix/Saldo MP' :
-                                mpPaymentType === 'bank_transfer' ? 'Pix' :
-                                    mpPaymentType === 'ticket' ? 'Boleto' : mpPaymentType;
-
-                    await fetch(import.meta.env.VITE_GOOGLE_SHEETS_URL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        body: JSON.stringify({
-                            ...formData,
-                            formaPagamento: formaTraduzida, 
-                            statusPagamento: statusTraduzido, 
-                            data_pagamento: new Date().toLocaleString('pt-BR')
-                        })
-                    });
-
-                    localStorage.removeItem('ujad_registration_data');
-                    setStatusEnvio('sucesso');
-                } catch (error) {
-                    console.error("Erro ao processar retorno:", error);
-                    setStatusEnvio('erro');
-                }
-            }
-
-            // Redireciona após 5 segundos
+        const redirecionamentoAgendado = async () => {
             setTimeout(() => navigate('/'), 5000);
         };
-
-        enviarDadosEAgendarRedirecionamento();
+        redirecionamentoAgendado();
     }, [navigate]);
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
             <main className="flex-grow flex items-center justify-center px-4">
                 <div className="max-w-md w-full bg-white rounded-xl shadow-2xl p-10 text-center border-t-4 border-adGold">
-                    {statusEnvio === 'processando' ? (
-                        <div className="space-y-4">
-                            <Loader2 className="mx-auto text-adBlue animate-spin" size={60} />
-                            <h2 className="text-2xl font-bold text-adBlue">Finalizando Inscrição...</h2>
+                    <div className="space-y-6">
+                        <CheckCircle className="mx-auto text-green-500" size={80} />
+                        <h2 className="text-3xl font-bold text-adBlue">Sucesso!</h2>
+                        <p className="text-gray-600 italic">Sua inscrição foi confirmada. Você será redirecionado em instantes.</p>
+                        <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                            <p className="text-xs text-adBlue font-bold">Pagamento realizado com sucesso.</p>
                         </div>
-                    ) : (
-                        <div className="space-y-6">
-                            <CheckCircle className="mx-auto text-green-500" size={80} />
-                            <h2 className="text-3xl font-bold text-adBlue">Sucesso!</h2>
-                            <p className="text-gray-600 italic">Sua inscrição foi confirmada. Você será redirecionado em instantes.</p>
-                            <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
-                                <p className="text-xs text-adBlue font-bold">Pagamento realizado com sucesso.</p>
-                            </div>
-                        </div>
-                    )}
+                    </div>
                 </div>
             </main>
             <Footer />

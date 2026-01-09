@@ -73,6 +73,15 @@ const InscricaoUJAD = () => {
         setIsRedirecting(true);
 
         try {
+            await fetch(import.meta.env.VITE_GOOGLE_SHEETS_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                    ...formData,
+                    formaPagamento: "",
+                    statusPagamento: 'INICIADO'
+                })
+            });
             const response = await fetch('/.netlify/functions/create-preference', {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },

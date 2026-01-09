@@ -9,9 +9,16 @@ initMercadoPago(import.meta.env.VITE_MP_PUBLIC_KEY);
 
 const InscricaoUJAD = () => {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
-    const [pixData, setPixData] = useState<{ qr_code: string, qr_code_url: string } | null>(null);
     const [isRedirecting, setIsRedirecting] = useState(false);
+
+    const [erroPagamento, setErroPagamento] = useState(false);
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('status') === 'failure') {
+            setErroPagamento(true);
+        }
+    }, []);
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -92,21 +99,6 @@ const InscricaoUJAD = () => {
         }
     };
 
-    if (pixData) {
-        return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-                <div className="bg-white p-8 rounded-xl shadow-xl max-w-md text-center border-t-4 border-adGold">
-                    <CheckCircle className="mx-auto text-green-500 mb-4" size={48} />
-                    <h2 className="text-2xl font-bold text-adBlue mb-2">Pedido Gerado!</h2>
-                    <p className="text-gray-600 mb-6">Escaneie o QR Code abaixo para pagar via PIX e confirmar sua inscrição.</p>
-                    <img src={pixData.qr_code_url} alt="QR Code Pix" className="mx-auto mb-4 w-48 h-48" />
-                    <div className="bg-gray-100 p-3 rounded text-xs break-all mb-4 font-mono">{pixData.qr_code}</div>
-                    <button onClick={() => navigate('/')} className="bg-adBlue text-white px-6 py-2 rounded-lg font-bold">Voltar ao Início</button>
-                </div>
-            </div>
-        );
-    }
-
 
     return (
         <div className="min-h-screen bg-gray-50 font-sans text-slate-900 flex flex-col">
@@ -123,7 +115,12 @@ const InscricaoUJAD = () => {
                     Preencha os campos abaixo para prosseguir com sua inscrição no próximo encontro regional.
                 </p>
             </div>
-
+            {erroPagamento && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <strong className="font-bold">Ops! </strong>
+                    <span className="block sm:inline">Não conseguimos processar seu pagamento. Tente novamente.</span>
+                </div>
+            )}
             {/* Formulário */}
             <main className="container mx-auto px-4 -mt-10 mb-16 flex-grow">
                 <form

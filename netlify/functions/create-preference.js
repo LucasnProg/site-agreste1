@@ -3,7 +3,7 @@ const { MercadoPagoConfig, Preference } = require('mercadopago');
 
 exports.handler = async (event) => {
 
-    const baseUrl = 'https://adagreste1.netlify.app';
+    const baseUrl = 'https://comead-agreste1.com.br';
     const client = new MercadoPagoConfig({
         accessToken: process.env.MP_ACCESS_TOKEN
     });
@@ -30,7 +30,7 @@ exports.handler = async (event) => {
             },
             binary_mode: true,
             payment_methods: {
-                installments: 3,
+                installments: 4,
                 excluded_payment_types: [
                     { id: "ticket" }
                 ],
